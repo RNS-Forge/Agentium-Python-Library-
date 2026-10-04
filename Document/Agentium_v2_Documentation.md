@@ -1,7 +1,7 @@
 # Agentium v2 — Complete Architecture & Function Documentation
 
 > **Package:** `agentium`  
-> **Version:** `2.0.0`  
+> **Version:** `2.0.3`  
 > **Core Runtime Dependencies:** **ZERO** (Python 3.11+ Standard Library only)  
 > **PDF Documentation:** [Document/Agentium_v2_Documentation.pdf](file:///c:/Temp%20Files/My%20Projects/Agentium-Python-Library-/Document/Agentium_v2_Documentation.pdf)
 

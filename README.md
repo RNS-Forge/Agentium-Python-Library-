@@ -9,7 +9,7 @@
 
 [![Python Support](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Zero Core Dependencies](https://img.shields.io/badge/core__dependencies-zero-success.svg)](#zero-runtime-dependency-guarantee)
-[![PyPI Version](https://img.shields.io/badge/pypi-v2.0.0-informational.svg)](https://pypi.org/project/agentium/)
+[![PyPI Version](https://img.shields.io/badge/pypi-v2.0.3-informational.svg)](https://pypi.org/project/agentium/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Agentium is an open-source engineering toolkit designed to guarantee context survival, claim grounding, and safe execution across multi-agent pipelines and long-running autonomous workflows.
