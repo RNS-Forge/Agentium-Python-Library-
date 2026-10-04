@@ -77,6 +77,12 @@ try:
 except Exception:
     GEMINI_INTEGRATION_AVAILABLE = False
 
+try:
+    import crewai  # type: ignore
+    CREWAI_INTEGRATION_AVAILABLE = True
+except Exception:
+    CREWAI_INTEGRATION_AVAILABLE = False
+
 # Main exports
 __all__ = [
     # Version and metadata

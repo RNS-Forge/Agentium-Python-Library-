@@ -7,14 +7,13 @@ name = "agentium"
 version = "2.0.0"
 description = "Context and trust integrity for multi-agent and long-running AI agents."
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "Sanjay N", email = "2005sanjaynrs@gmail.com" }]
 requires-python = ">=3.11"
 keywords = ["ai", "agents", "lineage", "multi-agent", "provenance", "fingerprint", "context-integrity"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
@@ -24,6 +23,13 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/RNS-Forge/Agentium-Python-Library-"
+Documentation = "https://github.com/RNS-Forge/Agentium-Python-Library-#readme"
+Repository = "https://github.com/RNS-Forge/Agentium-Python-Library-.git"
+Issues = "https://github.com/RNS-Forge/Agentium-Python-Library-/issues"
+Changelog = "https://github.com/RNS-Forge/Agentium-Python-Library-/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 # Observability & Tracing
