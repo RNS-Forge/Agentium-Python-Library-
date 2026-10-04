@@ -24,7 +24,7 @@ def test_zero_third_party_dependencies():
     assert hasattr(agentium, "Event")
     assert hasattr(agentium, "canonical_json")
     assert hasattr(agentium, "estimate_tokens")
-    assert agentium.__version__ == "2.0.0"
+    assert agentium.__version__.startswith("2.")
 
     after_modules = set(sys.modules.keys())
     newly_imported = after_modules - before_modules

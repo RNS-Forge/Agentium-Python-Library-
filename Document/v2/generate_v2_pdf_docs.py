@@ -99,7 +99,7 @@ def build_v2_pdf():
 
     # Executive Metadata Table
     meta_data = [
-        [Paragraph("<b>Version:</b> 2.0.0", body_style), Paragraph("<b>Core Dependency Pledge:</b> 0 Third-Party Dependencies (Python 3.11+ stdlib only)", body_style)],
+        [Paragraph("<b>Version:</b> 2.0.2", body_style), Paragraph("<b>Core Dependency Pledge:</b> 0 Third-Party Dependencies (Python 3.11+ stdlib only)", body_style)],
         [Paragraph("<b>Testing Status:</b> 21/21 Standalone Suites & 57/57 Unit Tests PASS (100%)", badge_pass), Paragraph("<b>Target Environment:</b> Production Multi-Agent Systems & CI/CD", body_style)],
         [Paragraph("<b>Scope:</b> All 10 Features (F1-F10) & 3 Framework Adapters", body_style), Paragraph("<b>Backward Compatibility:</b> 100% v1 Compatibility Shim via <code>agentium._v1</code>", body_style)],
     ]

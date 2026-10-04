@@ -1,4 +1,4 @@
-# Agentium v2.0.0 — Enterprise Deployment & Distribution Guide
+# Agentium v2.0.2 — Enterprise Deployment & Distribution Guide
 
 Agentium is a zero-core-dependency context and trust integrity library engineered for multi-agent and long-running autonomous AI systems. This guide provides comprehensive, production-grade instructions for building, validating, containerizing, and deploying Agentium across development, staging, CI/CD pipelines, PyPI, and air-gapped enterprise environments.
 
@@ -184,7 +184,7 @@ RUN groupadd -g 1001 appuser && \
 WORKDIR /app
 
 # Install Agentium Core (Zero dependencies)
-RUN pip install --no-cache-dir agentium==2.0.0
+RUN pip install --no-cache-dir agentium==2.0.2
 
 # Copy application source code
 COPY --chown=appuser:appuser . /app

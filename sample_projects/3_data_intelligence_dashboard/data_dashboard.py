@@ -572,7 +572,7 @@ def main():
     • Data points analyzed: {dashboard_results['summary_stats']['total_data_points']:,}
     
     AI Model: {dashboard_results['ai_model']}
-    ⏰ Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+     Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
     """
     
     dashboard.agentium.communicator.send_notification(

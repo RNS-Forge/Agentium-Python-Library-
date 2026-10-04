@@ -69,7 +69,7 @@ class DriftReport:
         return "\n".join(lines)
 
     def to_markdown(self) -> str:
-        status_badge = "🚨 **Drift Detected**" if self.has_drift else "✅ **No Drift Detected**"
+        status_badge = "[DRIFT DETECTED]" if self.has_drift else "[NO DRIFT DETECTED]"
         md = [
             "<!-- agentium-drift -->",
             "### Agentium Configuration Drift Report",
@@ -81,7 +81,7 @@ class DriftReport:
         ]
 
         for comp, cd in sorted(self.component_diffs.items()):
-            icon = "✅ Match" if cd.matches else "⚠️ Changed"
+            icon = "MATCH" if cd.matches else "CHANGED"
             md.append(f"| `{comp}` | {icon} | `{cd.baseline_hash[:12]}` | `{cd.current_hash[:12]}` |")
 
         if self.tools_added or self.tools_removed or self.tool_description_only_changes or self.tool_structural_changes:
@@ -91,9 +91,9 @@ class DriftReport:
             if self.tools_removed:
                 md.append(f"- **Removed Tools:** {', '.join(f'`{t}`' for t in self.tools_removed)}")
             if self.tool_description_only_changes:
-                md.append("- ℹ️ *Tool description-only change: parameter schemas are preserved.*")
+                md.append("- [INFO] *Tool description-only change: parameter schemas are preserved.*")
             if self.tool_structural_changes:
-                md.append("- ⚠️ *Tool structural change: parameter signatures or schemas have drifted.*")
+                md.append("- [WARN] *Tool structural change: parameter signatures or schemas have drifted.*")
 
         return "\n".join(md)
 

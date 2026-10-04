@@ -189,11 +189,11 @@ class LineageGraph:
         for nid, node in sorted(self.nodes.items()):
             clean_label = node.label.replace('"', '\\"')
             if node.type == "agent":
-                lines.append(f'  {nid}["🤖 Agent: {clean_label}"]:::agent')
+                lines.append(f'  {nid}["Agent: {clean_label}"]:::agent')
             elif node.type == "claim":
-                lines.append(f'  {nid}["📜 Claim: {clean_label}"]:::claim')
+                lines.append(f'  {nid}["Claim: {clean_label}"]:::claim')
             elif node.type == "tool_call":
-                lines.append(f'  {nid}["🔧 Tool: {clean_label}"]:::tool')
+                lines.append(f'  {nid}["Tool: {clean_label}"]:::tool')
             else:
                 lines.append(f'  {nid}["{clean_label}"]')
 

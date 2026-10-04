@@ -392,7 +392,7 @@ providing insights, translations, and structured data extraction.
         • Translations created: {summary_stats.get('translations', 0)}
         
         AI Model: {summary_stats.get('model_used', 'Local')}
-        ⏰ Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+         Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         """
         
         # Send console notification

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentium"
-version = "2.0.1"
+version = "2.0.2"
 description = "Context and trust integrity for multi-agent and long-running AI agents."
 readme = "README.md"
 license = "MIT"

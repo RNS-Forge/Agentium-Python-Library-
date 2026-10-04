@@ -279,9 +279,9 @@ class Communicator:
         
         # Add priority indicator
         if message.priority == MessagePriority.URGENT:
-            payload['content'] = f"🚨 **URGENT** 🚨\n{payload['content']}"
+            payload['content'] = f"[URGENT]\n{payload['content']}"
         elif message.priority == MessagePriority.HIGH:
-            payload['content'] = f"❗ **HIGH PRIORITY**\n{payload['content']}"
+            payload['content'] = f"[HIGH PRIORITY]\n{payload['content']}"
         
         response = requests.post(webhook_url, json=payload, timeout=self.config.timeout_seconds)
         response.raise_for_status()
@@ -377,9 +377,9 @@ class Communicator:
         
         # Add priority indicator
         if message.priority == MessagePriority.URGENT:
-            text = f"🚨 *URGENT* 🚨\n{text}"
+            text = f"[URGENT]\n{text}"
         elif message.priority == MessagePriority.HIGH:
-            text = f"❗ *HIGH PRIORITY*\n{text}"
+            text = f"[HIGH PRIORITY]\n{text}"
         
         url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         payload = {

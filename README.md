@@ -1,528 +1,500 @@
-# Agentium v2
+# Agentium
 
-<div align="center">
-  <img src="assets/agentium_companion.gif" width="180" alt="Agentium Orbital Companion Bot" />
-  <p><em>The Context and Trust Integrity Toolkit for Autonomous AI Agents</em></p>
-</div>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/RNS-Forge/Agentium-Python-Library-/main/assets/agentium_companion.gif" width="220" alt="Agentium Orbital Companion Bot" />
+</p>
+<p align="center">
+  <em>The Zero-Dependency Context and Trust Integrity Toolkit for Autonomous AI Agents</em>
+</p>
 
 [![Python Support](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Zero Core Dependencies](https://img.shields.io/badge/core__deps-zero-success.svg)](#zero-runtime-dependency-guarantee)
-[![PyPI Version](https://img.shields.io/badge/pypi-v2.0.0-informational.svg)](https://pypi.org/project/agentium/)
+[![Zero Core Dependencies](https://img.shields.io/badge/core__dependencies-zero-success.svg)](#zero-runtime-dependency-guarantee)
+[![PyPI Version](https://img.shields.io/badge/pypi-v2.0.2-informational.svg)](https://pypi.org/project/agentium/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Agentium provides deterministic guarantees that autonomous AI agents do not hallucinate facts during inter-agent handoffs, silently drop critical safety directives during context window compaction, leak secrets into telemetry, or mutate production systems without verified evidence.
+Agentium is an open-source engineering toolkit designed to guarantee context survival, claim grounding, and safe execution across multi-agent pipelines and long-running autonomous workflows.
 
 ---
 
 ## Table of Contents
 
-- [Executive Overview](#executive-overview)
+- [The Core Challenge in Autonomous Agents](#the-core-challenge-in-autonomous-agents)
 - [Zero Runtime Dependency Guarantee](#zero-runtime-dependency-guarantee)
-- [Installation Guide](#installation-guide)
-- [Core Architecture and Features](#core-architecture-and-features)
-  - [1. Evidence-Based Claims and Peer Agreement Defense](#1-evidence-based-claims-and-peer-agreement-defense)
-  - [2. Multi-Agent Lineage Graph and Root-Cause Blame](#2-multi-agent-lineage-graph-and-root-cause-blame)
-  - [3. Handoff Contracts and Token Envelopes](#3-handoff-contracts-and-token-envelopes)
-  - [4. Action Gate: Shadow and Enforce Modes](#4-action-gate-shadow-and-enforce-modes)
-  - [5. Context Pins and Compaction Guard](#5-context-pins-and-compaction-guard)
-  - [6. Speculative Read-Only Prefetch](#6-speculative-read-only-prefetch)
-  - [7. Cryptographic Run Fingerprints](#7-cryptographic-run-fingerprints)
-  - [8. Continuous Integration Drift Gate](#8-continuous-integration-drift-gate)
-  - [9. Diagnostic System Health: Init and Doctor](#9-diagnostic-system-health-init-and-doctor)
-  - [10. Secret Redaction Engine](#10-secret-redaction-engine)
-- [Integration Hub: Universal Wrapper and Facade](#integration-hub-universal-wrapper-and-facade)
-- [Tier-1 Production Recipes](#tier-1-production-recipes)
-- [Command Line Interface (CLI) Reference](#command-line-interface-cli-reference)
+- [Quick Start Guide for Beginners](#quick-start-guide-for-beginners)
+  - [Step 1: Installation](#step-1-installation)
+  - [Step 2: Project Health and Initialization](#step-2-project-health-and-initialization)
+  - [Step 3: Five-Minute Working Example](#step-3-five-minute-working-example)
+- [Comprehensive Feature Walkthrough](#comprehensive-feature-walkthrough)
+  - [Feature 1: Context Pins and Compaction Guard](#feature-1-context-pins-and-compaction-guard)
+  - [Feature 2: Action Gate - Shadow and Enforce Modes](#feature-2-action-gate---shadow-and-enforce-modes)
+  - [Feature 3: Evidence-Based Claims and Peer Agreement Defense](#feature-3-evidence-based-claims-and-peer-agreement-defense)
+  - [Feature 4: Multi-Agent Lineage Graph and Root-Cause Blame](#feature-4-multi-agent-lineage-graph-and-root-cause-blame)
+  - [Feature 5: Handoff Contracts and Token Envelopes](#feature-5-handoff-contracts-and-token-envelopes)
+  - [Feature 6: Speculative Read-Only Prefetch Engine](#feature-6-speculative-read-only-prefetch-engine)
+  - [Feature 7: Cryptographic Run Fingerprints](#feature-7-cryptographic-run-fingerprints)
+  - [Feature 8: Continuous Integration Drift Gate](#feature-8-continuous-integration-drift-gate)
+  - [Feature 9: Developer Diagnostics - Init and Doctor](#feature-9-developer-diagnostics---init-and-doctor)
+  - [Feature 10: Automatic Secret and PII Redaction](#feature-10-automatic-secret-and-pii-redaction)
+- [Universal Integration Hub](#universal-integration-hub)
+- [Production Recipes Catalog](#production-recipes-catalog)
+- [Framework Adapters](#framework-adapters)
+- [Command Line Interface Reference](#command-line-interface-reference)
 - [Backward Compatibility with Agentium v1](#backward-compatibility-with-agentium-v1)
 - [License and Governance](#license-and-governance)
 
 ---
 
-## Executive Overview
+## The Core Challenge in Autonomous Agents
 
-Modern production agent applications face four critical failure modes:
+When building production systems with large language models, applications routinely fail in four predictable ways:
 
-1. **Context Compaction Amnesia**: As conversations grow long, summarizers condense chat history to fit context windows. Critical security boundaries, user directives, and SLA rules get silently deleted.
-2. **Cascading Hallucinations**: In multi-agent pipelines, Agent A states an unverified guess; Agent B accepts it as truth; Agent C takes real-world action based on compounding false assumptions.
-3. **Unauthorized Mutations**: Agents invoke destructive API calls (SQL updates, financial refunds, account cancellations) without cryptographic provenance or verified evidence.
-4. **Supply-Chain Creep and Cold-Start Bloat**: Heavy libraries introduce hundreds of transitive dependencies, slowing down serverless cold starts and expanding security attack surfaces.
+1. **Compaction Amnesia**: As conversations exceed context limits, summarization modules compress history. Essential instructions (such as "never execute SQL queries on production databases" or "respond in French only") are dropped during compression.
+2. **Cascading Hallucinations**: In multi-agent pipelines, an unverified assumption generated by Agent 1 is accepted by Agent 2 as ground truth, leading Agent 3 to execute destructive real-world actions based on falsehoods.
+3. **Ungated Mutations**: Autonomous agents given tool access can execute destructive commands without verified justification or human oversight.
+4. **Supply Chain Creep**: Heavy agent frameworks frequently bring hundreds of third-party dependencies, leading to slow cold starts, supply-chain vulnerabilities, and fragile CI environments.
 
-Agentium solves these challenges with a zero-core-dependency architecture that runs entirely on Python 3.11+ Standard Library, delivering sub-millisecond cold starts and deterministic verification.
+Agentium solves these problems with deterministic, mathematical guarantees built exclusively on the Python standard library.
 
 ---
 
 ## Zero Runtime Dependency Guarantee
 
-Agentium's core package contains **zero third-party dependencies**. 
+Agentium Core contains **zero external runtime dependencies**.
 
-The entire core runtime leverages built-in Python standard library modules:
+Every core guarantee is implemented using Python 3.11+ built-in modules:
 - Configuration parsing: `tomllib`
-- Hashing and signatures: `hashlib`
-- Execution tracing: `contextvars`
-- Data modeling: `dataclasses`
-- Unicode normalization: `unicodedata`
-- Command-line operations: `argparse`
+- Cryptographic verification: `hashlib`
+- Async-safe context tracking: `contextvars`
+- Structured schemas: `dataclasses`
+- Text normalization: `unicodedata`
+- Command-line tooling: `argparse`
 
-Third-party framework adapters (such as LangGraph, CrewAI, OpenAI Agents SDK, Pydantic, Tenacity, and OpenTelemetry) are isolated as optional extras and are imported lazily only when explicitly requested.
+Third-party adapters (LangGraph, CrewAI, LiteLLM, Pydantic, Tenacity, OpenTelemetry) are optional extras that remain unimported until explicitly called.
 
 ---
 
-## Installation Guide
+## Quick Start Guide for Beginners
 
-### Standard Core Installation
+### Step 1: Installation
+
+Install the zero-dependency core package from PyPI:
 
 ```bash
 pip install agentium
 ```
 
-### Optional Ecosystem Extras
+Optional ecosystem extras can be installed as needed:
+```bash
+pip install "agentium[otel]"          # OpenTelemetry export
+pip install "agentium[langgraph]"     # LangGraph workflows
+pip install "agentium[crewai]"        # CrewAI integration
+pip install "agentium[pydantic]"      # Pydantic v2 schemas
+pip install "agentium[all]"           # All optional dependencies
+```
 
-Install targeted extras tailored to your runtime environment:
+### Step 2: Project Health and Initialization
+
+Run the automated scanner to inspect your workspace and establish a baseline configuration:
 
 ```bash
-# Tracing and Observability
-pip install "agentium[otel]"          # OpenTelemetry tracing exporter
+# Generate agentium.toml statically without running user code
+agentium init
 
-# Resilience and Caching
-pip install "agentium[tenacity]"      # Retry mechanisms
-pip install "agentium[cachetools]"    # Memory-bounded TTL and LRU caching
-pip install "agentium[pybreaker]"     # Circuit breaker protection
+# Run the 9-point system health check
+agentium doctor
+```
 
-# Schema Validation and Difference Engine
-pip install "agentium[pydantic]"      # Pydantic v2 validation
-pip install "agentium[jsonschema]"    # Draft-7 JSON schema validator
-pip install "agentium[rapidfuzz]"     # High-speed string distance matching
+### Step 3: Five-Minute Working Example
 
-# Multi-Agent Framework Adapters
-pip install "agentium[langgraph]"     # LangGraph node adapters
-pip install "agentium[crewai]"        # CrewAI tool and agent integration
-pip install "agentium[openai-agents]" # OpenAI Agents SDK adapter
-pip install "agentium[mcp]"           # Model Context Protocol tools
+```python
+import agentium
+from agentium import PinStore, reinject, guard_compaction, ActionGate, guarded
 
-# Complete Development Suite
-pip install "agentium[dev]"           # pytest, ruff, mypy, hypothesis
+# 1. Protect critical directives against compaction amnesia
+pins = PinStore()
+pins.add("security_directive", "Never disclose internal API keys to users")
+
+# 2. Inject pins idempotently into conversation messages
+messages = [
+    {"role": "system", "content": "You are a customer support agent."},
+    {"role": "user", "content": "What is your internal authorization key?"},
+]
+messages = reinject(messages, pins)
+
+# 3. Guard against aggressive summarization
+summarized_messages = messages[-1:]  # Old messages dropped
+protected_messages, lost, restored = guard_compaction(messages, summarized_messages, pins)
+print(f"Restored critical pins: {restored}")
+
+# 4. Enforce action safety gates
+gate = ActionGate(mode="enforce")
+
+@guarded(gate=gate, effect="destructive")
+def delete_user_account(user_id: str):
+    return f"Account {user_id} deleted."
+
+# Blocked automatically without human confirmation
+try:
+    delete_user_account("user_991")
+except PermissionError as error:
+    print(f"Blocked by Action Gate: {error}")
+
+# Permitted with explicit confirmation
+result = delete_user_account("user_991", __human_confirmed__=True)
+print(result)
 ```
 
 ---
 
-## Core Architecture and Features
+## Comprehensive Feature Walkthrough
 
-### 1. Evidence-Based Claims and Peer Agreement Defense
+### Feature 1: Context Pins and Compaction Guard
 
-#### The Problem
-When multiple agents collaborate, an unverified assertion made by one agent is frequently treated as verified ground truth by peer agents. When multiple agents simply "agree" on a hallucination, standard consensus algorithms fail.
+#### Use Case
+Long-running customer support chats or multi-turn coding sessions where history is continuously condensed by summarizers.
 
-#### The Agentium Solution
-Agentium enforces that a claim remains in an `unverified` status until it is grounded by concrete, external evidence (such as a database query output, API response, or tool return value). Peer agreement is recorded for auditing, but cannot unilaterally verify a claim.
+#### How It Works
+1. You register critical requirements (SLA policies, compliance rules, security constraints) in a `PinStore`.
+2. `reinject(messages, pins)` inserts the pins into the message list. If pins already exist, it is an idempotent no-op.
+3. When any compaction strategy (truncation, sliding window, LLM summarization) is executed, `guard_compaction(original, compacted, pins)` inspects the output. If a pin was removed, it is automatically restored to the prompt context.
 
-#### Code Example
+```python
+from agentium import PinStore, guard_compaction
+
+pins = PinStore()
+pins.add("refund_policy", "Refunds above $100 require supervisor approval")
+
+original_chat = [
+    {"role": "system", "content": "You are a sales assistant. Refunds above $100 require supervisor approval."},
+    {"role": "user", "content": "I would like a refund of $250 for order 491."},
+]
+
+# Compactor compresses history to a brief summary
+compressed_chat = [
+    {"role": "system", "content": "User requested refund for order 491."},
+]
+
+# Guard detects lost refund policy and restores it
+safe_chat, lost_pins, restored_pins = guard_compaction(original_chat, compressed_chat, pins)
+print("Protected messages:", safe_chat)
+```
+
+---
+
+### Feature 2: Action Gate - Shadow and Enforce Modes
+
+#### Use Case
+Protecting production systems from accidental database deletions, ungrounded financial transactions, or unauthorized cloud infrastructure modifications.
+
+#### How It Works
+Decorate functions with `@agentium.tool(effect="read"|"mutate"|"destructive")`.
+- `read`: Always allowed (e.g., retrieving balance, viewing user profile).
+- `mutate`: Permitted if standard execution context is valid.
+- `destructive`: Blocked in `enforce` mode unless grounded by verified evidence or explicit human approval. In `shadow` mode, actions execute while logging security telemetry.
+
+```python
+from agentium import ActionGate, guarded
+
+gate = ActionGate(mode="enforce")
+
+@guarded(gate=gate, effect="destructive")
+def refund_transaction(transaction_id: str, amount: float):
+    return f"Refunded {amount} for {transaction_id}"
+
+# This call raises PermissionError
+try:
+    refund_transaction("tx_881", 450.00)
+except PermissionError:
+    print("Action blocked: unauthorized destructive mutation")
+
+# This call succeeds
+confirmed = refund_transaction("tx_881", 450.00, __human_confirmed__=True)
+```
+
+---
+
+### Feature 3: Evidence-Based Claims and Peer Agreement Defense
+
+#### Use Case
+Multi-agent research pipelines where one agent speculates about a financial number or medical diagnosis, and other agents repeat it as verified fact.
+
+#### How It Works
+`ClaimStore` tracks statements made by agents. A claim begins as `unverified`.
+- **Peer Agreement Defense**: If another agent says "I agree with Agent 1", Agentium records the peer agreement for audit logs, but **refuses to change status to verified**.
+- **Evidence Verification**: The claim only transitions to `verified` when an `EvidenceRef` linking to an external tool call or document excerpt is supplied.
+
 ```python
 from agentium import ClaimStore, EvidenceRef
 
-claims = ClaimStore(run_id="run_order_901")
+claims = ClaimStore(run_id="research_run_01")
 
-# Agent 1 proposes a claim based on user input
-claim = claims.add(
-    statement="Customer order 88201 has been refunded in Stripe",
-    source_agent="support_agent",
-)
-assert claim.status == "unverified"
+# Agent 1 proposes an unverified statement
+c1 = claims.add("Company revenue grew 34% in Q3", source_agent="extractor_agent")
+assert claims.get(c1.id).status == "unverified"
 
-# Peer agreement defense: Agent 2 agrees, but claim remains unverified
-claims.record_peer_agreement(claim.id, peer_agent="supervisor_agent")
-assert claims.get(claim.id).status == "unverified"
+# Agent 2 agrees with Agent 1
+claims.record_peer_agreement(c1.id, peer_agent="analyst_agent")
+assert claims.get(c1.id).status == "unverified"  # Still unverified!
 
-# Grounding evidence is attached via an external tool output
+# Grounding evidence verifies the claim
 evidence = EvidenceRef(
-    source_type="tool_call",
-    source_id="stripe_refund_call_441",
-    excerpt="status: succeeded, amount: 4900, id: re_3Mxyz",
+    source_type="sec_filing",
+    source_id="10-Q_Q3_2026",
+    excerpt="Revenue increased 34% year-over-year to $4.2B",
 )
-claims.verify(claim.id, verifier_name="stripe_verifier", evidence=evidence)
-
-# The claim is now certified
-assert claims.get(claim.id).status == "verified"
+claims.verify(c1.id, verifier_name="financial_auditor", evidence=evidence)
+assert claims.get(c1.id).status == "verified"
 ```
 
 ---
 
-### 2. Multi-Agent Lineage Graph and Root-Cause Blame
+### Feature 4: Multi-Agent Lineage Graph and Root-Cause Blame
 
-#### The Problem
-When a multi-agent system produces an incorrect final answer, debugging which agent initiated the error, which tool returned stale data, and which downstream agents propagated the error is difficult.
+#### Use Case
+Auditing complex multi-agent workflows (e.g., planner -> coder -> reviewer -> deployer) to discover which agent introduced an erroneous assumption.
 
-#### The Agentium Solution
-Agentium maintains an execution Directed Acyclic Graph (DAG) recording every agent hop, tool execution, and claim dependency. When an erroneous claim is identified, Agentium generates a root-cause blame report tracing the exact provenance back to origin.
+#### How It Works
+`LineageGraph` builds an execution DAG tracking agent delegations, tool invocations, and claim dependencies. When an error is found, `graph.blame(claim_id)` walks backwards through the DAG to isolate the origin agent, tools used, and intermediate hops.
 
-#### Code Example
 ```python
 from agentium import LineageGraph
 
-graph = LineageGraph(run_id="run_order_901")
-
-# Record execution topology
+graph = LineageGraph(run_id="deploy_run_12")
 graph.record_agent("planner")
-graph.record_agent("researcher")
-graph.record_agent("writer")
+graph.record_agent("code_generator")
+graph.record_agent("security_scanner")
 
-graph.record_step("planner", "researcher", message_tokens=220)
-graph.record_claim_origin(claim_id="claim_price_10", agent="researcher")
-graph.record_step("researcher", "writer", message_tokens=310)
+graph.record_step("planner", "code_generator", message_tokens=150)
+graph.record_claim_origin("claim_sql_safe", agent="code_generator")
+graph.record_step("code_generator", "security_scanner", message_tokens=280)
 
-# Generate an automated root-cause blame report
-report = graph.blame(claim_id="claim_price_10")
-print(f"Origin Agent: {report.origin_agent}")
-print(f"Tool Dependencies: {report.tool_dependencies}")
+# Automated blame report
+report = graph.blame("claim_sql_safe")
+print(f"Origin agent: {report.origin_agent}")
+print(f"Dependency path: {report.path}")
 
-# Export directly to Mermaid flowchart for visual inspection
-mermaid_diagram = graph.to_mermaid()
-print(mermaid_diagram)
+# Export to Mermaid flowchart
+print(graph.to_mermaid())
 ```
 
 ---
 
-### 3. Handoff Contracts and Token Envelopes
+### Feature 5: Handoff Contracts and Token Envelopes
 
-#### The Problem
-Agents passing arbitrary, unbounded dictionaries between each other cause token-window exhaustion, circular handoff loops, and dropped parameters.
+#### Use Case
+Ensuring structured context passing between agents without dropped fields, token explosions, or circular handoff loops.
 
-#### The Agentium Solution
-`HandoffContract` defines a strongly typed schema for inter-agent packets with hard token limits, mandatory fields, and circularity detection.
+#### How It Works
+`HandoffContract` defines the contract between a sender and receiver. `lint_handoff` checks for missing required keys, circular delegation loops (A -> B -> A), and token budget violations.
 
-#### Code Example
 ```python
 from agentium import HandoffContract, HandoffPacket
 
-# Define contract between triage agent and billing agent
 contract = HandoffContract(
-    source_agent="triage_agent",
-    target_agent="billing_agent",
-    max_tokens=400,
-    required_keys=["customer_id", "issue_summary"],
+    source_agent="triage",
+    target_agent="database_admin",
+    max_tokens=250,
+    required_keys=["incident_id", "severity"],
 )
 
-# Construct valid packet
 packet = HandoffPacket(
-    source_agent="triage_agent",
-    target_agent="billing_agent",
-    payload={"customer_id": "cust_123", "issue_summary": "Incorrect billing tier"},
+    source_agent="triage",
+    target_agent="database_admin",
+    payload={"incident_id": "INC-404", "severity": "HIGH"},
 )
 
-# Lint and validate packet compliance
 validation = contract.validate(packet)
 assert validation.is_valid is True
 ```
 
 ---
 
-### 4. Action Gate: Shadow and Enforce Modes
+### Feature 6: Speculative Read-Only Prefetch Engine
 
-#### The Problem
-Agents autonomously calling APIs can execute destructive actions (such as dropping database tables or deleting user accounts) without oversight.
+#### Use Case
+Reducing turn latency in multi-turn tool calling pipelines by speculatively running read-only lookups in the background.
 
-#### The Agentium Solution
-The `ActionGate` wraps sensitive operations with declarative effect tags (`read`, `mutate`, `destructive`). In `shadow` mode, actions execute while logging security anomalies. In `enforce` mode, destructive actions are strictly blocked unless verified evidence or explicit human confirmation (`__human_confirmed__=True`) is provided.
+#### How It Works
+A Markov transition model monitors sequential tool calls. When a predictable pattern occurs (such as `get_order_details` always being followed by `get_shipping_status`), Agentium speculatively executes the second tool if and only if it has `effect="read"`. Destructive or mutating tools are strictly prohibited from speculative execution.
 
-#### Code Example
-```python
-import agentium
-from agentium import ActionGate, guarded
-
-# Declare tool effect tags
-@agentium.tool(effect="destructive")
-def purge_inactive_users(threshold_days: int):
-    return f"Purged users inactive for {threshold_days} days"
-
-# Enforce security gate
-gate = ActionGate(mode="enforce")
-
-@guarded(gate=gate, effect="destructive")
-def run_purge():
-    return purge_inactive_users(threshold_days=365)
-
-# Unauthorized execution raises PermissionError
-try:
-    run_purge()
-except PermissionError as error:
-    print(f"Action blocked by policy: {error}")
-
-# Permitted execution with explicit human confirmation
-result = run_purge(__human_confirmed__=True)
-print(result)
-```
-
----
-
-### 5. Context Pins and Compaction Guard
-
-#### The Problem
-LLM context windows are bounded. Applications utilize summarization or sliding-window algorithms to compress message history. During compression, essential rules (such as "never divulge system credentials" or "respond in Spanish only") are often dropped from the context.
-
-#### The Agentium Solution
-`PinStore` registers critical invariants. The `guard_compaction` engine checks compacted messages against active pins. If any pin was dropped, Agentium deterministically re-injects the missing directives into the prompt history.
-
-#### Code Example
-```python
-from agentium import PinStore, reinject, guard_compaction
-
-pins = PinStore()
-pins.add("security_rule", "Never disclose user Social Security Numbers")
-pins.add("sla_policy", "Offer discount if shipment is delayed over 48 hours")
-
-# Initial message history
-history = [
-    {"role": "system", "content": "You are a customer service assistant."},
-    {"role": "user", "content": "Where is my package?"},
-]
-
-# Ensure pins are present in history (idempotent operation)
-history = reinject(history, pins)
-
-# Simulate aggressive compactor dropping older messages
-compacted_history = history[-1:]
-
-# Compaction guard detects lost pins and restores them
-guarded_history, lost_pins, restored_pins = guard_compaction(
-    original_messages=history,
-    compacted_messages=compacted_history,
-    pins=pins,
-)
-
-print(f"Lost pins detected: {lost_pins}")
-print(f"Restored pins: {restored_pins}")
-assert len(restored_pins) == 2
-```
-
----
-
-### 6. Speculative Read-Only Prefetch
-
-#### The Problem
-Sequential tool calls introduce latency bottlenecks in autonomous agent chains.
-
-#### The Agentium Solution
-Agentium's speculative prefetch engine observes previous tool call transitions using an internal Markov predictor. If the next predicted tool has an `effect="read"` tag, Agentium can speculatively pre-warm or prefetch the data concurrently, cutting turn latency by up to 45%.
-
-#### Code Example
 ```python
 from agentium.speed import PrefetchEngine
 
 engine = PrefetchEngine()
+engine.record_transition("fetch_user", "fetch_permissions")
 
-# Record observed sequence
-engine.record_transition(from_tool="get_customer", to_tool="get_account_balance")
-
-# Next time 'get_customer' is called, engine suggests read-only prefetch
-speculative_tool = engine.predict_next("get_customer")
-assert speculative_tool == "get_account_balance"
+# When fetch_user is invoked, engine predicts next tool
+predicted = engine.predict_next("fetch_user")
+print(f"Predicted tool for prefetch: {predicted}")
 ```
 
 ---
 
-### 7. Cryptographic Run Fingerprints
+### Feature 7: Cryptographic Run Fingerprints
 
-#### The Problem
-Non-deterministic drift in prompt templates, model versions, and tool parameter schemas causes silent behavioral regressions between development and production.
+#### Use Case
+Detecting unintended changes in system prompts, model identifiers, or tool schemas between code commits and production deployments.
 
-#### The Agentium Solution
-`agentium.fingerprint` computes a canonical SHA-256 fingerprint encompassing:
-- System and user prompt templates
-- Model identifier and temperature settings
-- Exact JSON schemas of all declared tools
+#### How It Works
+`compute_fingerprint` normalizes strings using Unicode NFC and produces a deterministic SHA-256 hash encompassing prompts, parameters, and tool schemas.
 
-When any component changes, the fingerprint changes deterministically.
-
-#### Code Example
 ```python
 from agentium.fingerprint import compute_fingerprint
 
-fingerprint = compute_fingerprint(
-    model="claude-3-5-sonnet-20241022",
-    prompt_template="You are a data extraction assistant for {domain}.",
-    tools=[{"name": "fetch_data", "parameters": {"type": "object"}}],
+fp = compute_fingerprint(
+    model="gpt-4o",
+    prompt_template="You are an enterprise code reviewer.",
+    tools=[{"name": "lint_code", "parameters": {"type": "object"}}],
 )
-
-print(f"Canonical Run Fingerprint: {fingerprint.hash}")
+print("Run Fingerprint:", fp.hash)
 ```
 
 ---
 
-### 8. Continuous Integration Drift Gate
+### Feature 8: Continuous Integration Drift Gate
 
-#### The Problem
-Pull requests introduce subtle prompt changes or tool schema updates that pass unit tests but degrade agent performance in production.
+#### Use Case
+Preventing pull requests from silently altering agent prompts or schema definitions.
 
-#### The Agentium Solution
-Agentium introduces `agentium lock` and `agentium check`:
-1. `agentium lock`: Generates an `agentium.lock` file storing approved baseline fingerprints.
-2. `agentium check`: Compares the current code state against `agentium.lock`. In CI/CD pipelines, `agentium check` exits with status code 1 upon detecting unapproved drift.
+#### How It Works
+Run `agentium lock` to capture approved baselines. In your CI workflow, run `agentium check`. If any prompt, tool argument, or model configuration drifted without an updated lockfile, the CI step exits with code 1.
 
 ```bash
-# Capture approved baseline in development
-agentium lock --from my_agent.pipeline:create_agent
+# Capture approved fingerprint
+agentium lock --from my_module.agent:build_pipeline
 
-# Verify in GitHub Actions or CI pipeline
+# Check in CI
 agentium check --strict
 ```
 
 ---
 
-### 9. Diagnostic System Health: Init and Doctor
+### Feature 9: Developer Diagnostics - Init and Doctor
 
-#### The Problem
-Developers struggle with complex initial configuration, broken lockfiles, missing directories, or environment misalignments.
+#### Use Case
+Non-destructive environment setup, configuration verification, and troubleshooting.
 
-#### The Agentium Solution
-Agentium provides non-intrusive static inspection tools:
-
-- `agentium init`: Statically inspects repository files and safely creates `agentium.toml` with zero side effects.
-- `agentium doctor`: Runs a 9-point system health check verifying Python versions, lockfile integrity, pin stores, lineage graphs, and installed framework extras.
+#### How It Works
+- `agentium init`: Scans workspace files to detect frameworks (LangGraph, CrewAI, OpenAI) and outputs a valid `agentium.toml` without modifying project code.
+- `agentium doctor`: Runs a 9-point diagnostic verifying Python versions, config validity, event stores, lock status, pin retention rates, and lineage graph integrity.
 
 ```bash
-# Initialize project configuration
 agentium init
-
-# Run system health diagnostics
-agentium doctor
+agentium doctor --strict
 ```
 
 ---
 
-### 10. Secret Redaction Engine
+### Feature 10: Automatic Secret and PII Redaction
 
-#### The Problem
-Autonomous agents frequently log credentials, bearer tokens, or API keys directly into telemetry, trace files, and third-party monitoring platforms.
+#### Use Case
+Preventing API keys, authorization tokens, and personal credentials from leaking into OpenTelemetry spans, logs, or JSONL trace files.
 
-#### The Agentium Solution
-Agentium includes an internal redaction engine that automatically intercepts payloads and masks API keys (`sk-`, `ghp_`, `xoxb-`), authorization headers, and private certificates before writing to JSONL or OpenTelemetry exporters.
+#### How It Works
+The redaction engine evaluates outgoing event payloads against high-entropy regex patterns matching OpenAI keys (`sk-...`), GitHub tokens (`ghp_...`), Slack tokens (`xoxb-...`), and generic Bearer headers, replacing them with `[REDACTED_API_KEY]`.
 
 ```python
-from agentium.core.redact import Redactor
+from agentium.core.redact import redact_payload
 
-redactor = Redactor()
-raw_text = "Bearer sk-proj-998240192840192840129481029481029"
-clean_text = redactor.redact_text(raw_text)
-assert "sk-proj-" not in clean_text
-print(clean_text)  # "Bearer [REDACTED_API_KEY]"
+raw_data = {"headers": {"Authorization": "Bearer sk-proj-1234567890abcdef1234567890"}}
+safe_data = redact_payload(raw_data)
+print(safe_data["headers"]["Authorization"])
+# Output: Bearer [REDACTED_API_KEY]
 ```
 
 ---
 
-## Integration Hub: Universal Wrapper and Facade
+## Universal Integration Hub
 
-Agentium provides universal wrapping functions (`wrap` and `wrap_async`) that add context pin guards, action gates, and secret redaction to existing agent tool functions or external libraries with zero refactoring.
+Agentium's integration hub allows wrapping any existing function, API client, or framework tool to instantly provide effect tagging, secret scrubbing, and action gate protection:
 
 ```python
 from agentium.hub import wrap
 
-# Existing arbitrary third-party function
-def query_database(sql: str):
-    return {"status": "success", "rows": 10}
+def fetch_weather(city: str):
+    return {"city": city, "temp": 72}
 
-# Wrapped with Agentium trust integrity, secret redaction, and action gate
-guarded_query = wrap(
-    query_database,
-    effect="read",
-    redact_output=True,
-)
-
-result = guarded_query(sql="SELECT * FROM users")
+# Wrap function with read-only effect tag and automatic redaction
+safe_fetch = wrap(fetch_weather, effect="read", redact_output=True)
+result = safe_fetch("San Francisco")
 ```
 
 ---
 
-## Tier-1 Production Recipes
+## Production Recipes Catalog
 
-Agentium provides 20 battle-tested Tier-1 recipes across all common agent development workflows. Every recipe is available in synchronous and asynchronous twins:
+Agentium includes 20 pre-built Tier-1 recipes (40 sync/async twins) covering the most common agent engineering patterns:
 
-| Recipe ID | Module | Primary Purpose |
-|:---|:---|:---|
-| **R01** | `api_call_safe` | HTTP requests with exponential backoff and secret scrubbing |
-| **R03** | `cached_tool` | TTL cache wrapper for external read-only tool calls |
-| **R05** | `validated_tool_args` | Pydantic schema validation for LLM tool arguments |
-| **R06** | `structured_llm` | Robust JSON repair and validation for LLM outputs |
-| **R08** | `smart_compact` | Compaction guard ensuring context pins survive summarization |
-| **R10** | `llm_failover` | Automatic failover to secondary LLM provider upon error |
-| **R15** | `mcp_safe_tools` | Action gate wrapper for Model Context Protocol (MCP) servers |
-| **R22** | `fuzzy_verify` | RapidFuzz string matching for verifying claims against source |
-| **R23** | `graph_retry` | Node-level retry and state rollback for LangGraph pipelines |
-| **R25** | `graph_tracing` | Automated OpenTelemetry span generation for agent graphs |
-| **R27** | `protected_handoff` | Schema validation and token cap enforcement for handoffs |
-| **R28** | `mcp_bridge` | Bidirectional bridge connecting MCP tools to Agentium registry |
-| **R39** | `fuzzy_dedupe_cache` | Deduplication of semantically similar tool arguments |
-| **R42** | `http_cache_tool` | RFC-compliant HTTP caching for API tools |
-| **R43** | `budget_llm` | Hard token budget and financial cost tracking per run |
-| **R44** | `typed_agent_tools` | Type-safe tool signatures with automatic JSON schema generation |
-| **R45** | `safe_call` | Circuit breaker protection preventing cascade failures |
-| **R51** | `drift_report` | Automated drift analysis between runs and lockfiles |
-| **R58** | `verified_extract` | Evidence extraction grounded by source document verification |
-
-### Recipe Example: Protected Handoff (R27)
-
-```python
-from agentium.recipes.protected_handoff import protected_handoff
-
-def target_worker(data: dict):
-    return f"Processed {data['task_id']}"
-
-# Wrap with schema validation and hard 500 token limit
-guarded_worker = protected_handoff(
-    target_worker,
-    required_keys=["task_id", "priority"],
-    max_tokens=500,
-)
-
-# Valid call executes smoothly
-result = guarded_worker({"task_id": "T-101", "priority": "high"})
-```
+| ID | Recipe Name | Integrated Tools | Primary Guarantee |
+|:---|:---|:---|:---|
+| **R01** | `api_call_safe` | `httpx`, `tenacity` | Safe HTTP calls with exponential backoff and secret scrubbing |
+| **R03** | `cached_tool` | `cachetools` | Read-only TTL caching keyed on canonical argument hashes |
+| **R05** | `validated_tool_args` | `pydantic` | Automatic schema validation for LLM-generated arguments |
+| **R06** | `structured_llm` | `jsonrepair`, `pydantic` | Parsing and repair of malformed LLM JSON responses |
+| **R08** | `smart_compact` | `tiktoken` | Context compaction that preserves all active pins |
+| **R10** | `llm_failover` | `litellm` | Multi-model failover routing upon provider outage |
+| **R15** | `mcp_safe_tools` | `mcp` | Model Context Protocol tools gated by ActionGate |
+| **R22** | `fuzzy_verify` | `rapidfuzz` | Grounding claims against documents using fuzzy similarity |
+| **R23** | `graph_retry` | `langgraph` | Resilient LangGraph nodes with automated rollback |
+| **R25** | `graph_tracing` | `langgraph`, `otel` | Automated OpenTelemetry span generation for graph runs |
+| **R27** | `protected_handoff` | `pydantic`, `jsonschema` | Token-capped, validated inter-agent handoff envelopes |
+| **R28** | `mcp_bridge` | `mcp` | Bidirectional bridge connecting MCP tools to Agentium |
+| **R39** | `fuzzy_dedupe_cache` | `rapidfuzz` | Semantic deduplication of incoming tool arguments |
+| **R42** | `http_cache_tool` | `cachetools`, `httpx` | RFC-compliant HTTP caching for API tools |
+| **R43** | `budget_llm` | `litellm` | Hard token budget and cost tracking per session |
+| **R44** | `typed_agent_tools` | `openai-agents` | Type-safe tool signatures with automatic schema export |
+| **R45** | `safe_call` | `pybreaker` | Circuit breaker protection preventing cascade outages |
+| **R51** | `drift_report` | `deepdiff` | Structural diff reports across agent runs |
+| **R58** | `verified_extract` | `jmespath` | Grounded extraction generating verified claims |
 
 ---
 
-## Command Line Interface (CLI) Reference
+## Framework Adapters
 
-Agentium provides a developer-friendly command line interface:
+Agentium adapters connect seamlessly to popular agent runtimes:
 
-| Command | Arguments | Description |
-|:---|:---|:---|
-| `agentium init` | `[--dry-run] [--force]` | Inspect repository and generate `agentium.toml` |
-| `agentium doctor` | `[--strict] [--json]` | Run 9-point system health diagnostic scan |
-| `agentium lock` | `--from <mod:fn> [--out path]` | Calculate and record approved fingerprint baseline |
-| `agentium check` | `[--strict] [--format text\|json\|md]` | Verify current agent against `agentium.lock` |
-| `agentium lineage claims` | `<run_id>` | List and inspect all claims recorded in a run |
-| `agentium lineage blame` | `<run_id> <claim_id>` | Trace root-cause blame report for an erroneous claim |
-| `agentium lineage diff` | `<run_a> <run_b>` | Diff claims and topology between two runs |
-| `agentium handoff lint` | `<path_to_packet_json>` | Validate handoff packet against contract rules |
-| `agentium pins render` | `[--run_id id]` | Render active context pins to deterministic text |
-| `agentium soak` | `[--cycles N] [--loss-target float]` | Execute compaction soak test harness |
+- **LangGraph**: `agentium.adapters.LangGraphAdapter` wraps state nodes and checkpointers.
+- **CrewAI**: `agentium.adapters.CrewAIAdapter` guards agent delegations and task outputs.
+- **OpenAI Agents**: `agentium.adapters.OpenAIAgentsAdapter` provides function schema generation and effect gating.
+
+---
+
+## Command Line Interface Reference
+
+```bash
+# Workspace setup and validation
+agentium init [--dry-run] [--force]
+agentium doctor [--strict] [--json]
+
+# Schema fingerprinting and CI gates
+agentium lock --from <module:function>
+agentium check [--strict] [--format text|json|md]
+
+# Provenance and lineage analysis
+agentium lineage claims <run_id>
+agentium lineage blame <run_id> <claim_id>
+agentium lineage diff <run_a> <run_b>
+
+# Handoff packet validation
+agentium handoff lint <path_to_json>
+
+# Context pins and soak testing
+agentium pins render [--run_id id]
+agentium soak [--cycles N] [--loss-target float]
+```
 
 ---
 
 ## Backward Compatibility with Agentium v1
 
-Agentium v2 maintains complete backward compatibility with all legacy Agentium v1 text-processing components:
-
-- `Condenser`
-- `Optimizer`
-- `Rearranger`
-- `Extractor`
-- `Communicator`
-- `Translator`
-- `InsightGenerator`
-- `WorkflowHelper`
-- `TemplateManager`
-- `MemoryHelper`
-- `CustomSummarizer`
-- `LoggerUtils`
-- `Agentium` (legacy facade)
-
-Legacy imports emit an informative `DeprecationWarning` directing developers toward the v2 trust integrity APIs while continuing to function without breaking existing code.
+All legacy Agentium v1 text-processing classes (`Condenser`, `Optimizer`, `Rearranger`, `Extractor`, `Communicator`, `Translator`, `InsightGenerator`, `WorkflowHelper`, `TemplateManager`, `MemoryHelper`, `CustomSummarizer`, and `LoggerUtils`) remain operational:
 
 ```python
-# Legacy v1 imports remain functional:
+# Legacy v1 usage continues to work seamlessly:
 from agentium import Condenser, Optimizer, Agentium
 
 agent = Agentium()
-result = agent.process_content("Sample text", workflow="basic")
+result = agent.process_content("Sample text to condense", workflow="basic")
 ```
 
 ---
