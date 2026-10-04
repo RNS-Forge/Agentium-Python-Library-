@@ -7,9 +7,7 @@ from __future__ import annotations
 import warnings
 from typing import Any
 
-__version__ = "2.0.0"
-__author__ = "Sanjay N"
-__license__ = "MIT"
+from ._meta import VERSION as __version__, AUTHOR as __author__, LICENSE as __license__
 
 # Core v2 Foundation Exports
 from .core.run import run, get_current_run, RunContext
