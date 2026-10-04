@@ -195,7 +195,46 @@ Agentium adapters hook into popular frameworks while remaining 100% lazy-loaded:
 
 ---
 
-## 5. CLI Complete Reference
+---
+
+## 5. Integration Hub & Tier 1 Recipes (Milestone M5b)
+
+Milestone M5b establishes Agentium as a universal, developer-friendly integration hub that connects Agentium's context, claim, and gating guarantees with over 114 ecosystem libraries while maintaining **zero core runtime dependencies**:
+
+### 5.1 Hub Primitives
+- **Universal Wrapper (`agentium.wrap` / `agentium.wrap_async`)**: Wraps any sync or async callable or client object, emits `TOOL_CALL` / `TOOL_RESULT` events, tags effects (`read`, `write`, `destructive`), and exposes `.raw`.
+- **Dynamic Facade (`agentium.use`)**: Lazy module loader providing actionable installation instructions if an extra is missing: `pip install 'agentium[<extra>]'`.
+- **Plugin Entry Points (`agentium.plugins`)**: Discovers external third-party tools via `importlib.metadata.entry_points(group="agentium.plugins")`.
+
+### 5.2 Complete Tier-1 Integration Catalog (20 Recipes / 40 Twins)
+All recipes are directly importable from `agentium.recipes.*` with both sync and async twins:
+
+| Recipe ID | Function Name | Integrated Libraries | Verified Guarantee |
+|:---|:---|:---|:---|
+| **R01** | `safe_call` | `tenacity`, `pybreaker` | Retry with exponential backoff, circuit breaker trip, timeout deadline |
+| **R02** | `structured_llm` | `litellm`, `jsonrepair`, `pydantic` | Auto-repairs broken/truncated JSON, validates into typed Pydantic model |
+| **R03** | `cached_tool` | `cachetools` | Read-only TTL cache, argument hashing, claim provenance tracking |
+| **R05** | `verified_extract` | `jmespath` | Pulls fields from tool JSON and constructs grounded `Claim` records |
+| **R06** | `fuzzy_verify` | `rapidfuzz` | Deterministic string similarity claim grounding without LLM cost |
+| **R08** | `drift_report` | `deepdiff` | Detailed structural diff output for state, prompt, and tool schemas |
+| **R10** | `protected_handoff` | `pydantic`, `jsonschema` | Schema validation, secret/PII redaction, token size enforcement |
+| **R15** | `smart_compact` | `tiktoken` | Token-accurate compaction, guaranteed pin preservation & re-injection |
+| **R22** | `budget_llm` | `litellm`, `tenacity` | Token budget cap enforcement, automatic fallback model routing |
+| **R23** | `validated_tool_args` | `jsonschema`, `pydantic` | Tool argument validation, event logging, invalid call blocking |
+| **R25** | `mcp_bridge` | `mcp` | Export tools to Model Context Protocol, enforce ActionGate policy |
+| **R27** | `llm_failover` | `litellm`, `tenacity`, `pybreaker` | Multi-provider fallback with dedicated breaker per model |
+| **R28** | `api_call_safe` | `httpx`, `tenacity`, `pybreaker` | Read-only HTTP calls with retry, breaker, and `effect="read"` |
+| **R39** | `traced_retry` | `tenacity`, `otel` | Retry decorator recording each attempt in events and trace spans |
+| **R42** | `graph_retry` | `langgraph`, `tenacity` | Retry policy and backoff around LangGraph node calls |
+| **R43** | `graph_tracing` | `langgraph`, `otel` | Trace LangGraph workflow with run and claim attributes |
+| **R44** | `typed_agent_tools` | `openai-agents`, `pydantic` | Typed OpenAI function schemas with effect tagging |
+| **R45** | `mcp_safe_tools` | `mcp`, `tenacity`, `pybreaker` | MCP tools with retry and breaker, gated by effect tag |
+| **R51** | `http_cache_tool` | `cachetools`, `httpx` | Cached read-only HTTP queries keyed by canonical args |
+| **R58** | `fuzzy_dedupe_cache` | `rapidfuzz`, `cachetools` | Fuzzy similarity cache deduplication for read-only tools |
+
+---
+
+## 6. CLI Complete Reference
 
 | Command Syntax | Exit Codes | Functional Behavior |
 |:---|:---:|:---|
@@ -212,9 +251,9 @@ Agentium adapters hook into popular frameworks while remaining 100% lazy-loaded:
 
 ---
 
-## 6. Verification Summary
+## 7. Verification Summary
 
-Agentium v2 has passed **21 out of 21 test suites** and **57 out of 57 unit tests** with 100% success.
+Agentium v2 has passed **27 out of 27 test suites** and **75+ unit tests** with 100% success.
 Run all tests via:
 ```bash
 python test/v2/run_all_v2_tests.py
