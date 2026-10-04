@@ -1,7 +1,12 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+_project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+_src_dir = os.path.join(_project_root, 'src')
+if _src_dir not in sys.path:
+    sys.path.insert(0, _src_dir)
+if _project_root not in sys.path:
+    sys.path.insert(1, _project_root)
 
 from agentium.core.rearranger import Rearranger, ArrangementStrategy, ContentType
 

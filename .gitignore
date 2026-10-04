@@ -27,3 +27,7 @@ htmlcov/
 *.swo
 .DS_Store
 Thumbs.db
+
+# Agentium runtime
+.agentium/events/
+.agentium/lineage/

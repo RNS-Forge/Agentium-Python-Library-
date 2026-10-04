@@ -1,0 +1,69 @@
+name: 'Agentium Drift Gate'
+description: 'Verify current agent components against agentium.lock and comment drift diffs on pull requests'
+inputs:
+  from:
+    description: 'Target module:callable returning agent components dict'
+    required: false
+    default: ''
+  fail-on-drift:
+    description: 'Fail the action step if drift is detected'
+    required: false
+    default: 'true'
+  github-token:
+    description: 'GitHub token with PR comment permissions'
+    required: false
+    default: ${{ github.token }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Agentium Check
+      id: check
+      shell: bash
+      run: |
+        CMD="agentium check --format md"
+        if [ -n "${{ inputs.from }}" ]; then
+          CMD="$CMD --from ${{ inputs.from }}"
+        fi
+        
+        # Run check and capture output and exit code
+        set +e
+        OUTPUT=$($CMD 2>&1)
+        EXIT_CODE=$?
+        set -e
+        
+        # Save output for PR comment
+        echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+        {
+          echo "report<<EOF"
+          echo "$OUTPUT"
+          echo "EOF"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Post or Update PR Comment
+      if: github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        REPORT: ${{ steps.check.outputs.report }}
+      run: |
+        PR_NUMBER="${{ github.event.pull_request.number }}"
+        REPO="${{ github.repository }}"
+        MARKER="<!-- agentium-drift -->"
+        
+        # Check for existing comment with marker
+        EXISTING_ID=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" | head -n 1)
+        
+        if [ -n "$EXISTING_ID" ]; then
+          echo "Updating existing drift comment $EXISTING_ID"
+          gh api -X PATCH "repos/${REPO}/issues/comments/${EXISTING_ID}" -f body="$REPORT"
+        else
+          echo "Creating new drift comment on PR #${PR_NUMBER}"
+          gh api -X POST "repos/${REPO}/issues/${PR_NUMBER}/comments" -f body="$REPORT"
+        fi
+
+    - name: Evaluate Failure
+      if: inputs.fail-on-drift == 'true' && steps.check.outputs.exit_code != '0'
+      shell: bash
+      run: |
+        echo "Agentium drift check failed with exit code ${{ steps.check.outputs.exit_code }}"
+        exit ${{ steps.check.outputs.exit_code }}

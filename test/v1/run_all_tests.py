@@ -40,6 +40,9 @@ def run_suite():
         print(f"\n>> Running {tf}...")
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
+        project_root = os.path.abspath(os.path.join(test_dir, '..', '..'))
+        src_dir = os.path.join(project_root, 'src')
+        env["PYTHONPATH"] = f"{src_dir}{os.pathsep}{project_root}" + (os.pathsep + env["PYTHONPATH"] if "PYTHONPATH" in env else "")
         proc = subprocess.run([sys.executable, path], capture_output=True, text=True, env=env)
         if proc.returncode == 0:
             print(f"[PASS] {tf}")

@@ -1,312 +1,178 @@
-# Agentium - AI Agent Development Toolkit
+# Agentium v2
 
-[![PyPI version](https://badge.fury.io/py/agentium.svg)](https://badge.fury.io/py/agentium)
-[![Python Support](https://img.shields.io/pypi/pyversions/agentium.svg)](https://pypi.org/project/agentium/)
+[![Python Support](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Zero Dependencies](https://img.shields.io/badge/core_deps-zero-success.svg)](#zero-runtime-dependency-pledge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive Python library designed for AI agent development and workflow orchestration. Agentium provides a rich set of tools and utilities that seamlessly integrate with popular AI frameworks like LangChain, LangGraph, and now features built-in **Google Gemini API integration**.
+**Context & trust integrity toolkit for multi-agent and long-running AI agents.**
 
-## New Features
+Agentium guarantees that AI agents don't hallucinate facts during handoffs, silently drop critical instructions during context-window compaction, leak API credentials into telemetry, or mutate production systems without verified evidence.
 
-- **Google Gemini Integration** - Built-in support for Gemini Pro, Gemini 1.5 Pro, and Gemini 1.5 Flash
-- **Model Selection** - Easy switching between different AI models
-- **Enhanced AI Processing** - All core features now support AI-enhanced processing
-- **Advanced Configuration** - Comprehensive model and processing configuration
+---
 
-## Features
+## ⚡ Key Highlights
 
-- **Condense**: Intelligent content condensation and compression with AI enhancement
-- **Optimizer**: Refine text, code, and workflows for better performance
-- **Rearranger**: Organize and restructure content logically
-- **Extractor**: Extract structured information from various data sources
-- **Communicator**: Send messages and notifications across platforms
-- **Translator**: Multi-language translation with AI-powered tone adaptation
-- **Insight Generator**: Generate actionable insights from data using AI
-- **Workflow Helper**: Orchestrate complex tasks and triggers
-- **Template Manager**: Standardize outputs with customizable templates
-- **Memory Helper**: Context storage and retrieval system
-- **Custom Summarizer**: Create AI-enhanced summaries tailored to specific needs
-- **Logger Utils**: Track and debug operations with detailed logging
-- **Gemini Integration**: Native Google Gemini API support with model selection
+- 🔒 **Zero Core Dependencies**: Core runtime uses **Python 3.11+ Standard Library only**. No bloated dependency trees, no supply-chain vulnerability creep, sub-millisecond cold starts.
+- 📌 **Context Pins (F5)**: Critical directives, SLAs, and security rules survive context compaction via deterministic, idempotent re-injection.
+- 🛡️ **Action Gate (F4)**: Prevent unauthorized mutations. Destructive actions require human confirmation or verified grounding evidence.
+- 🤝 **Evidence-Based Claims & Peer Agreement Defense (F1)**: Claims require grounded evidence. Peer agents cannot self-certify unverified statements.
+- 📊 **Multi-Agent Lineage Graph (F2)**: Full provenance DAG with root-cause blame reports and automatic Mermaid flowchart generation.
+- 📦 **Handoff Contracts (F3)**: Structured packets between agents with hard token caps and unbreakable constraints.
+- 🧬 **Run Fingerprints & Drift CI Gate (F7, F8)**: Cryptographically lock agent prompts, models, and schemas (`agentium lock`). Fail CI pull requests on drift (`agentium check`).
+- 🩺 **Developer Health (F9)**: Non-intrusive static scan (`agentium init`) and 9-point system health check (`agentium doctor`).
+- ⚡ **Speculative Prefetch (F10)**: Experimental read-only prefetch engine with Markov chain next-tool prediction.
 
-## Installation
+---
+
+## 🚀 Quickstart
+
+### 1. Installation
 
 ```bash
+# Core library (Zero third-party runtime dependencies)
 pip install agentium
+
+# Optional extras
+pip install "agentium[otel]"          # OpenTelemetry tracing export
+pip install "agentium[langgraph]"     # LangGraph adapter
+pip install "agentium[crewai]"        # CrewAI adapter
+pip install "agentium[openai-agents]" # OpenAI Agents SDK adapter
 ```
 
-### With AI Enhancement (Recommended):
+### 2. Initialize in your project
 
 ```bash
-# For full AI capabilities including Gemini
-pip install agentium google-generativeai
+# Statically inspects project files and generates agentium.toml
+agentium init
 
-# For LangChain integration
-pip install agentium[langchain]
-
-# For LangGraph integration
-pip install agentium[langgraph]
-
-# For development
-pip install agentium[dev]
+# Run system health diagnostics
+agentium doctor
 ```
 
-## API Key Setup
-
-### Getting Your Google Gemini API Key
-
-To use the AI-enhanced features, you need a Google Gemini API key:
-
-1. **Visit Google AI Studio**
-   - Go to https://makersuite.google.com/app/apikey
-   - Sign in with your Google account
-
-2. **Create API Key**
-   - Click "Create API Key"
-   - Choose "Create API key in new project" or select an existing project
-   - Copy the generated API key and save it securely
-
-3. **Set Up Your API Key** (Choose one method):
-
-   **Method 1: Environment Variable (Recommended)**
-   ```bash
-   # Windows (Command Prompt)
-   set GEMINI_API_KEY=your_api_key_here
-   
-   # Windows (PowerShell)
-   $env:GEMINI_API_KEY="your_api_key_here"
-   
-   # Linux/Mac
-   export GEMINI_API_KEY=your_api_key_here
-   ```
-
-   **Method 2: In Your Python Code**
-   ```python
-   from agentium.integrations.gemini import GeminiIntegration
-   
-   # Initialize with API key directly
-   gemini = GeminiIntegration(api_key="your_api_key_here")
-   ```
-
-   **Method 3: Using .env File**
-   ```bash
-   # Create a .env file in your project root
-   echo "GEMINI_API_KEY=your_api_key_here" > .env
-   ```
-   ```python
-   import os
-   from dotenv import load_dotenv
-   
-   load_dotenv()
-   api_key = os.getenv('GEMINI_API_KEY')
-   ```
-
-### Important Security Notes
-
-- **Never commit API keys to version control**
-- **Use environment variables in production**
-- **Keep your API keys secure and private**
-- **Monitor your API usage in Google Cloud Console**
-
-## Quick Start
+### 3. Declaring Tools & Effect Tags
 
 ```python
-from agentium import Agentium
-from agentium.integrations.gemini import GeminiIntegration
+import agentium
 
-# Initialize with Gemini AI enhancement
-agentium = Agentium()
-gemini = GeminiIntegration(api_key="your-gemini-api-key")
+# Read tools are always safe
+@agentium.tool(effect="read")
+def lookup_customer(customer_id: str):
+    return {"id": customer_id, "plan": "enterprise"}
 
-# Basic text processing
-condensed_text = agentium.condenser.condense("Your long text here...")
-optimized_text = agentium.optimizer.optimize(condensed_text)
+# Destructive tools require authorization
+@agentium.tool(effect="destructive")
+def terminate_subscription(customer_id: str):
+    return f"Terminated {customer_id}"
+```
 
-# AI-enhanced processing
-enhanced_summary = gemini.enhance_condenser(
-    text="Complex document content",
-    style="executive-summary"
+### 4. Protecting Long-Running Agents with Context Pins
+
+```python
+from agentium import PinStore, reinject, guard_compaction
+
+# Register non-negotiable boundaries
+pins = PinStore()
+pins.add("security_boundary", "Never execute SQL DROP or DELETE operations")
+pins.add("customer_sla", "Respond within 15 minutes")
+
+# Inject pins into messages before model calls (idempotent no-op if already present)
+messages = [{"role": "user", "content": "Help with account"}]
+messages = reinject(messages, pins)
+
+# When compaction drops older history, guard_compaction restores active pins
+compacted_messages = messages[-2:]  # Aggressive compactor
+repaired, lost, restored = guard_compaction(messages, compacted_messages, pins)
+print(f"Pins recovered: {restored}")
+```
+
+### 5. Multi-Agent Claims & Provenance Blame
+
+```python
+from agentium import ClaimStore, EvidenceRef, LineageGraph
+
+claims = ClaimStore(run_id="run_101")
+
+# Agent 1 proposes an unverified statement
+c1 = claims.add("Payment transaction approved", source_agent="billing_agent")
+
+# Peer agreement defense: Agent 2 agreeing does NOT mark it verified
+claims.record_peer_agreement(c1.id, peer_agent="fulfillment_agent")
+assert claims.get(c1.id).status == "unverified"
+
+# Grounding evidence verifies the claim
+evidence = EvidenceRef(
+    source_type="tool_call",
+    source_id="stripe_charge_42",
+    excerpt="Charge status: succeeded",
 )
-
-# Workflow orchestration
-workflow_result = agentium.workflow_helper.process_workflow({
-    "input": "Data to process",
-    "steps": ["condense", "optimize", "extract"],
-    "ai_enhanced": True
-})
-
-print(f"Processed result: {workflow_result}")
+claims.verify(c1.id, verifier_name="stripe_verifier", evidence=evidence)
+assert claims.get(c1.id).status == "verified"
 ```
 
-## Configuration with Gemini
+### 6. Action Gate (Shadow & Enforce Modes)
 
 ```python
-from agentium.integrations.gemini import GeminiIntegration, GeminiConfig
+from agentium import ActionGate, guarded
 
-# Configure Gemini integration
-config = GeminiConfig(
-    model_name="gemini-1.5-pro",
-    temperature=0.7,
-    max_tokens=1000
-)
+gate = ActionGate(mode="enforce")
 
-gemini = GeminiIntegration(
-    api_key="your-api-key",
-    config=config
-)
+@guarded(gate=gate, effect="destructive")
+def wipe_database():
+    return "Database wiped"
 
-# Use with any Agentium feature
-enhanced_insights = gemini.enhance_insights(
-    data="Your data here",
-    context="Financial analysis",
-    insight_type="trend_analysis"
-)
+# Blocked by default in enforce mode
+try:
+    wipe_database()
+except PermissionError as e:
+    print(f"Action blocked: {e}")
+
+# Permitted with human confirmation
+wipe_database(__human_confirmed__=True)
 ```
 
-## Sample Projects
+---
 
-The `sample_projects/` directory contains 5 comprehensive examples demonstrating all Agentium features:
+## 🛠️ CLI Reference
 
-### 1. Content Processing Pipeline (`content_pipeline.py`)
-Advanced document processing system with AI-enhanced content analysis, multi-format support, and intelligent workflow orchestration.
+Agentium provides a CLI for CI/CD gates, diagnostics, and debugging:
 
-**Features Demonstrated:**
-- Content condensation and optimization
-- Multi-language translation with tone adaptation  
-- Template-based report generation
-- Memory management and context storage
-- Gemini AI enhancement for superior content quality
+| Command | Description |
+|:---|:---|
+| `agentium init [--dry-run] [--force]` | Statically scan project files and generate `agentium.toml` |
+| `agentium doctor [--strict] [--json]` | 9-point health check (Python, lock, pins, lineage, scanners) |
+| `agentium lock --from <mod:fn>` | Record baseline model, prompt, and tool schema fingerprint to `agentium.lock` |
+| `agentium check [--format text\|json\|md]` | Verify current agent against `agentium.lock`; exit 0 (match) or 1 (drift) |
+| `agentium lineage claims <run_id>` | Inspect claims generated in a run |
+| `agentium lineage blame <run_id> <claim_id>` | Trace claim root-cause back to origin agent, tools, and dependencies |
+| `agentium lineage diff <run_a> <run_b>` | Diff claims and handoff topology between two runs |
+| `agentium handoff lint <path>` | Lint handoff packet JSON against schema, circular handoffs, and limits |
+| `agentium pins render` | Render deterministic text block of active context pins |
+| `agentium soak` | Run compaction soak test simulating 20+ multi-turn compactions |
 
-```python
-# Example usage
-pipeline = ContentProcessingPipeline()
-result = pipeline.process_document("document.pdf", output_format="executive-summary")
-```
+---
 
-### 2. Multilingual News Analyzer (`news_analyzer.py`)
-Real-time news analysis system with sentiment analysis, trend detection, and multi-language support.
+## 🔒 Zero Runtime Dependency Pledge
 
-**Features Demonstrated:**
-- Real-time content extraction and processing
-- Advanced insight generation with trend analysis
-- Multi-language translation and sentiment analysis
-- Workflow orchestration for news processing
-- AI-enhanced content understanding
+The core package of Agentium v2 has **zero third-party dependencies**. It relies exclusively on the Python Standard Library (`tomllib`, `hashlib`, `unicodedata`, `contextvars`, `dataclasses`, `argparse`).
 
-```python
-# Example usage
-analyzer = NewsAnalyzer()
-analysis = analyzer.analyze_news_feed("https://news-feed-url", languages=["en", "es", "fr"])
-```
-
-### 3. Data Intelligence Dashboard (`data_dashboard.py`)
-Comprehensive data analysis and visualization system with AI-powered insights.
-
-**Features Demonstrated:**
-- Advanced data extraction and processing
-- AI-enhanced insight generation
-- Real-time data visualization
-- Memory-based context management
-- Intelligent report generation
-
-```python
-# Example usage
-dashboard = DataIntelligenceDashboard()
-insights = dashboard.generate_intelligence_report("sales_data.csv")
-```
-
-### 4. Automated Report Generator (`report_generator.py`)
-Professional report generation system with AI-enhanced content creation and multi-format output.
-
-**Features Demonstrated:**
-- Template-based report generation
-- AI-enhanced content optimization
-- Multi-format output (PDF, HTML, Markdown)
-- Workflow automation for report creation
-- Memory management for report templates
-
-```python
-# Example usage
-generator = AutomatedReportGenerator()
-report = generator.generate_comprehensive_report("project_data", "quarterly-report")
-```
-
-### 5. Smart Communication Hub (`communication_hub.py`)
-Intelligent communication orchestration system with multi-channel messaging and workflow automation.
-
-**Features Demonstrated:**
-- Multi-channel communication management
-- Workflow-based message orchestration
-- AI-enhanced content optimization for different channels
-- Memory management for communication history
-- Intelligent message routing and optimization
-
-```python
-# Example usage
-hub = SmartCommunicationHub()
-result = hub.process_and_distribute_message(
-    "Important announcement",
-    channels=["email", "slack", "teams"],
-    ai_enhanced=True
-)
-```
-
-## Streamlit Demo
-
-Try the interactive demo to explore all Agentium features:
-
+To verify:
 ```bash
-# Install Streamlit
-pip install streamlit plotly pandas
-
-# Run the demo
-streamlit run sample_projects/agentium_streamlit_demo.py
+python -c "import agentium; print('Zero external modules imported!')"
 ```
 
-The demo includes:
-- Interactive feature testing
-- Real-time processing examples
-- AI model selection interface
-- Processing history and export capabilities
-- Comprehensive feature demonstrations
+---
 
-## Framework Integration
+## 🔄 Backward Compatibility with v1
 
-### LangChain Integration
+All legacy v1 public classes (`Condenser`, `Optimizer`, `Rearranger`, `Communicator`, `Extractor`, `Translator`, etc.) and integration shims (`agentium.integrations.gemini`) remain fully operational and tested. They emit a `DeprecationWarning` directing users to the v2 context and trust integrity APIs.
 
 ```python
-from agentium.integrations.langchain import AgentiumTool
-from langchain.agents import initialize_agent
-
-# Create Agentium tools for LangChain
-tools = AgentiumTool.create_all_tools()
-agent = initialize_agent(tools, llm, agent_type="zero-shot-react-description")
+# Legacy v1 usage continues to function:
+from agentium import Condenser  # Emits DeprecationWarning
 ```
 
-### LangGraph Integration
+---
 
-```python
-from agentium.integrations.langgraph import AgentiumNode
-from langgraph import Graph
+## 📄 License
 
-# Add Agentium nodes to LangGraph
-graph = Graph()
-graph.add_node("condenser", AgentiumNode.condenser_node)
-graph.add_node("optimizer", AgentiumNode.optimizer_node)
-```
-
-## Documentation
-
-For detailed documentation and examples, visit [our documentation site](https://agentium.readthedocs.io).
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-If you encounter any issues or have questions, please [open an issue](https://github.com/RNSsanjay/Agentium-Python-Library/issues) on GitHub.
+MIT License. Copyright (c) 2024-2026 Sanjay N.

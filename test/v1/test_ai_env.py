@@ -3,8 +3,12 @@ import sys
 import requests
 import dotenv
 
-# Load .env file
-dotenv.load_dotenv(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env')))
+# Load .env file from project root or parent
+_proj_env = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
+if os.path.exists(_proj_env):
+    dotenv.load_dotenv(_proj_env)
+else:
+    dotenv.load_dotenv(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env')))
 
 def test_groq_ai():
     print("--- 1. Testing Groq API Key from .env ---")

@@ -7,7 +7,9 @@ from reportlab.platypus import (
 )
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
-pdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Agentium_Functions_Test_Report.pdf"))
+_doc_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Document"))
+os.makedirs(_doc_dir, exist_ok=True)
+pdf_path = os.path.join(_doc_dir, "Agentium_v1_Documentation.pdf")
 
 def build_pdf():
     doc = SimpleDocTemplate(

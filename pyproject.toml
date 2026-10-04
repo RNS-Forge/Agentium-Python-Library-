@@ -1,0 +1,96 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentium"
+version = "2.0.0"
+description = "Context and trust integrity for multi-agent and long-running AI agents."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Sanjay N", email = "2005sanjaynrs@gmail.com" }]
+requires-python = ">=3.11"
+keywords = ["ai", "agents", "lineage", "multi-agent", "provenance", "fingerprint", "context-integrity"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []
+
+[project.optional-dependencies]
+# Observability & Tracing
+otel = ["opentelemetry-api>=1.20.0"]
+otelsdk = ["opentelemetry-sdk>=1.20.0"]
+
+# Resilience & Caching (Tier 1)
+tenacity = ["tenacity>=8.2.0"]
+pybreaker = ["pybreaker>=1.0.0"]
+cachetools = ["cachetools>=5.0.0"]
+
+# Validation, Parsing & Diffs (Tier 1)
+pydantic = ["pydantic>=2.0.0"]
+jsonschema = ["jsonschema>=4.0.0"]
+jsonrepair = ["json-repair>=0.10.0"]
+jmespath = ["jmespath>=1.0.0"]
+rapidfuzz = ["rapidfuzz>=3.0.0"]
+deepdiff = ["deepdiff>=6.0.0"]
+
+# Tokens, Models & HTTP (Tier 1)
+tiktoken = ["tiktoken>=0.5.0"]
+litellm = ["litellm>=1.0.0"]
+httpx = ["httpx>=0.24.0"]
+
+# Agent Frameworks (Tier 1)
+langgraph = ["langgraph>=0.0.20"]
+crewai = ["crewai>=0.1.0"]
+openai-agents = ["openai>=1.0.0"]
+mcp = ["mcp>=1.0.0"]
+
+# Utilities & Dev (Tier 1)
+pluggy = ["pluggy>=1.0.0"]
+pytest = ["pytest>=7.0.0"]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "hypothesis>=6.0.0",
+]
+
+# Real v1 compatibility extras
+langchain = ["langchain>=0.1.0"]
+ai = ["google-generativeai>=0.3.0"]
+
+[project.entry-points."agentium.plugins"]
+# Third-party plugin registration point
+
+[project.scripts]
+agentium = "agentium.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+agentium = ["py.typed"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["test/v2"]
+pythonpath = ["src"]
